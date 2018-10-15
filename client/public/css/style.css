@@ -1,0 +1,15 @@
+.whitebox{
+    background: white; 
+    border-radius: 6px; 
+    padding: 20px;
+    -moz-box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    box-shadow: 0 0 8px rgba(0,0,0,0.2); 
+}
+.section_one{
+  margin: 20px 0;
+}
+.buton-green{color:#fff;background-color:#006400;border-color:#006400}
+.buton-green:hover{color:#fff;background-color:#449d44;border-color:#419641}
+.buton-green.focus,.buton-green:focus{-webkit-box-shadow:0 0 0 2px rgba(92,184,92,.5);box-shadow:0 0 0 2px rgba(92,184,92,.5)}.buton-green.disabled,.buton-green:disabled{background-color:#006400;border-color:#006400}
+.buton-green.active,.buton-green:active,.show>.buton-green.dropdown-toggle{color:#fff;background-color:#449d44;background-image:none;border-color:#419641}

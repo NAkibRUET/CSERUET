@@ -1,0 +1,8 @@
+.dropitem{
+	padding: 5px;
+	background:white;
+	display: block;
+}
+.dropitem:hover{
+	background:#C3FBC0;
+}

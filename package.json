@@ -1,0 +1,32 @@
+{
+  "name": "projectmamunsir",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/server.js",
+    "server": "nodemon server/server.js",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "engines": {
+    "node": "8.10.0"
+  },
+  "author": "fahimNakib",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.0",
+    "body-parser": "^1.18.3",
+    "cloudinary": "^1.11.0",
+    "concurrently": "^4.0.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "moment-js": "^1.1.15",
+    "mongoose": "^5.3.1",
+    "multer": "^1.4.0",
+    "multer-storage-cloudinary": "^2.2.1",
+    "react-image-crop": "^6.0.0"
+  }
+}
