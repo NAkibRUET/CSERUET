@@ -36,8 +36,8 @@ class Profile extends React.Component{
 				
 				<br/>
 				<div><h5>Name:{this.state.name}</h5> </div>
-				<div><h5>Name:{this.state.email}</h5> </div>
-				<div><h5>Name:{this.state.blood}</h5> </div>
+				<div><h5>Email:{this.state.email}</h5> </div>
+				<div><h5>Blood:{this.state.blood}</h5> </div>
 				<Link to="/profile/update/info"><button>Edit</button></Link>
 			</div>
 		)
