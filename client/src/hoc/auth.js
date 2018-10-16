@@ -21,7 +21,7 @@ export default function(ComposedClass,reload){
 				}
 			}else{
 				if(reload === 2){
-					this.props.history.push("/profile/update");	
+					this.props.history.push("/profile");	
 				}
 				
 			}

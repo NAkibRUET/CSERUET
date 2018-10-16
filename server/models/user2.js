@@ -9,17 +9,16 @@ const user2Schema = mongoose.Schema({
 		unique:1
 	},
 	name:{
-		type:String,
-		required: true,
+		type:String
 	},
 	email:{
-		type:String,
+		type:String
 	},
 	blood:{
-		type:String,
+		type:String
 	},
 	image:{
-		type:String,
+		type:String
 	}
 })
 const User2 = mongoose.model('User2',user2Schema)

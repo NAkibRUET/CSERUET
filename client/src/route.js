@@ -4,7 +4,8 @@ import {Switch, Route} from 'react-router-dom';
 import Home from './components/Home/home';
 //import BookView from './components/Books';
 //import User from './components/Admin';
-import ProfileUpdate from './components/Profile/profile_update';
+import ProfileUpdateImage from './components/Profile/profile_update_image';
+import ProfileUpdateInfo from './components/Profile/profile_update_info';
 import Profile from './components/Profile/profile';
 //import FileUpload from './components/fileupload';
 import Login from './containers/login';
@@ -27,7 +28,8 @@ class Routes extends Component{
 					<Route path="/" exact component={Auth(Home,null)}/>
 					<Route path="/login" exact component={Auth(Login,2)}/>
 					<Route path="/profile" exact component={Auth(Profile,1)}/>					
-					<Route path="/profile/update" exact component={Auth(ProfileUpdate,1)}/>
+					<Route path="/profile/update/image" exact component={Auth(ProfileUpdateImage,1)}/>
+					<Route path="/profile/update/info" exact component={Auth(ProfileUpdateInfo,1)}/>
 				</Switch>
 			</Layout>
 		)

@@ -8,10 +8,6 @@ class ProfileUpdate extends React.Component{
 	state={
 		selectedFile: null, 
 		loaded:0,
-		name:'',
-		email:'',
-		blood:'',
-		error:'',
 		success:false
 	}
 	handleselectedFile = event => {
@@ -20,7 +16,7 @@ class ProfileUpdate extends React.Component{
 	      loaded: 0,
 	    })
 	}
-	handleName=(event)=>{
+	/*handleName=(event)=>{
 		this.setState({name:event.target.value});
 	}
 	handleEmail=(event)=>{
@@ -28,19 +24,19 @@ class ProfileUpdate extends React.Component{
 	}
 	handleBlood=(event)=>{
 		this.setState({blood:event.target.value});
-	}
+	}*/
 	handleUpload = (e) => {
 		e.preventDefault();
 		let roll = this.props.user.login.roll;
 	    const data = new FormData();
 	    console.log(this.state);
 	    data.append('file', this.state.selectedFile, this.state.selectedFile.name)
-	    data.append('name',this.state.name);
-	    data.append('email',this.state.email);
-	    data.append('blood',this.state.blood);
+	    //data.append('name',this.state.name);
+	    //data.append('email',this.state.email);
+	    //data.append('blood',this.state.blood);
 	    data.append('roll',roll);
 	    axios
-	      .post('/api/createProfile', data, {
+	      .post('/api/updateImage', data, {
 	        onUploadProgress: ProgressEvent => {
 	          this.setState({
 	            loaded: (ProgressEvent.loaded / ProgressEvent.total*100),
@@ -71,25 +67,7 @@ class ProfileUpdate extends React.Component{
 			<div className="">
 				<form onSubmit={this.handleUpload}>
 					<h2>Update Profile Here</h2>
-					<div className=""><input 
-						type="text" 
-						placeholder="Enter Name"
-						onChange={this.handleName}
-					/></div>
-					<div className=""><input
-						 type="text" 
-						 placeholder="Enter Email" 
-						 onChange={this.handleEmail}
-						 />
-
-					</div>
-					<div className=""><input
-						 type="text" 
-						 placeholder="Enter Blood Group" 
-						 onChange={this.handleBlood}
-						 />
-
-					</div>
+					
 					<input type="file" name="" id="" onChange={this.handleselectedFile} />
 						        
 			        <button type="submit" onClick={this.handleUpload}>Upload</button>

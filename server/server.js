@@ -46,7 +46,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 //User
 app.get('/api/profiledata',(req,res)=>{
-	console.log(req.query.roll)
+	//console.log(req.query.roll)
 	User2.findOne({'roll':req.query.roll},(err,exist)=>{
 		if(err)return res.status(400).send(err);
 		if(!exist){ 
@@ -58,6 +58,39 @@ app.get('/api/profiledata',(req,res)=>{
 			res.send(exist)
 		}
 	})
+})
+app.post('/api/updateImage',parser.single('file'),(req,res)=>{
+	let uploadFile = req.file;
+  	const fileName = req.file.name;
+  	console.log(uploadFile.url)
+  	let roll = req.body.roll;
+  	User2.findOneAndUpdate({roll: `${roll}`}, {$set:{image:`${uploadFile.url}`}},{new:true},(err,user)=>{
+		if(err)return res.status(400).send(err);
+		if(user){
+			res.json({
+				message:"Successfully Updated Image"
+			})
+		}
+  	})
+  	
+})
+
+app.post('/api/updateProfileInfo',(req,res)=>{
+	let roll = req.body.roll;
+  	let name = req.body.name;
+  	let email = req.body.email;
+  	let blood = req.body.blood;
+  	console.log(name);
+  	console.log(roll);
+  	User2.findOneAndUpdate({roll: `${roll}`}, {$set:{name:`${name}`,email: `${email}`,blood: `${blood}`}},{new:true},(err,user)=>{
+		if(err)return res.status(400).send(err);
+		if(user){
+			res.json({
+				message:"Successfully Updated Profile Info"
+			})
+		}
+  	})
+  	
 })
 app.post('/api/createProfile',parser.single('file'),(req,res)=>{
   	let uploadFile = req.file;
@@ -108,13 +141,16 @@ app.post('/api/register',(req,res)=>{
 	let roll = req.body.roll;
 	let fl = 0;
 	const user = new User1({roll:`${roll}`,password:`${pass}`,code:`${code}`,fl:`${fl}`});
+	const user2 = new User2({roll:`${roll}`});
 	User1.findOne({'roll':`${roll}`},(err,exist)=>{
 		if(!exist){
 			user.save((err,doc)=>{
-				if(err)return res.status(400).send(err);
+				if(err)return res.status(400)
+			})
+			user2.save((err,doc)=>{
+				if(err)return res.status(400)
 				res.status(200).json({
-					post:true,
-					UserId: doc._id
+					Message: "Successfully Updated"
 				})
 			})
 		}else{

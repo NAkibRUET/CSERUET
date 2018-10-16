@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import {Link} from 'react-router-dom';
 //import {ProfileUser} from '../actions'
 
 class Profile extends React.Component{
@@ -30,12 +31,14 @@ class Profile extends React.Component{
 					<img src={this.state.image} width="200"/>
 					:<img src="/images/avatar.png" width="200"/>	
 				}
+				<br/>
+				<Link to="/profile/update/image"><button>Edit</button></Link>
 				
 				<br/>
 				<div><h5>Name:{this.state.name}</h5> </div>
 				<div><h5>Name:{this.state.email}</h5> </div>
 				<div><h5>Name:{this.state.blood}</h5> </div>
-
+				<Link to="/profile/update/info"><button>Edit</button></Link>
 			</div>
 		)
 	}
