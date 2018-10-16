@@ -61,9 +61,11 @@ app.get('/api/profiledata',(req,res)=>{
 })
 app.post('/api/updateImage',parser.single('file'),(req,res)=>{
 	let uploadFile = req.file;
+
   	const fileName = req.file.name;
   	console.log(uploadFile.url)
   	let roll = req.body.roll;
+  	console.log(roll)
   	User2.findOneAndUpdate({roll: `${roll}`}, {$set:{image:`${uploadFile.url}`}},{new:true},(err,user)=>{
 		if(err)return res.status(400).send(err);
 		if(user){
@@ -121,6 +123,7 @@ app.post('/api/register',(req,res)=>{
 	for (let i = 0; i < 15; i++)
 	   code += possible.charAt(Math.floor(Math.random() * possible.length));
 	let roll = req.body.roll;
+	console.log(roll);
 	let fl = 0;
 	const user = new User1({roll:`${roll}`,password:`${pass}`,code:`${code}`,fl:`${fl}`});
 	const user2 = new User2({roll:`${roll}`});
