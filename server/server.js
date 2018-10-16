@@ -92,24 +92,6 @@ app.post('/api/updateProfileInfo',(req,res)=>{
   	})
   	
 })
-app.post('/api/createProfile',parser.single('file'),(req,res)=>{
-  	let uploadFile = req.file;
-  	const fileName = req.file.name;
-  	let roll = req.body.roll;
-  	let name = req.body.name;
-  	let email = req.body.email;
-  	let blood = req.body.blood;
-  	console.log(uploadFile);
-  	
-  	const imageupload = new User2({roll:`${roll}`,name:`${name}`,email:`${email}`,blood:`${blood}`,image:`${uploadFile.url}`});
-	
-	imageupload.save((err,doc)=>{
-		if(err)return res.status(400)
-		res.status(200).json({
-			Message: "Successfully Updated"
-		})
-	}) 
-})
 
 app.get('/api/auth',auth,(req,res)=>{
 
@@ -253,16 +235,6 @@ app.post('/api/login',(req,res)=>{
 		}
 	})
 
-})
-app.post('/api/createprofile',(req,res)=>{
-	const userprofile = new User2(req.body);
-	userprofile.save((err,doc)=>{
-		if(err)return res.status(400).send(err);
-		res.status(200).json({
-			post:true,
-			UserRoll: doc.roll
-		})
-	})	
 })
 
 const port = process.env.PORT || 3001;
