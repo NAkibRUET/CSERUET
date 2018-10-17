@@ -10,11 +10,12 @@ import {image64toCanvasRef,
         extractImageFileExtensionFromBase64,
         base64StringtoFile,
         downloadBase64File} from '../../imageCropping/image_crop';
+
 const imageMaxSize= 10000000;
 const acceptedFileType= 'image/x-png, image/png,image/jpg,image/jpeg,image/gif';
 const acceptedFileTypeArray= acceptedFileType.split(",").map((item)=>{return item.trim()})
-class ProfileUpdate extends React.Component{
 
+class ProfileUpdate extends React.Component{
     imagePreviewCanvasRef= React.createRef();
     state={
         imgSrc:null,
@@ -22,7 +23,8 @@ class ProfileUpdate extends React.Component{
             aspect: 1/1
         },
         loaded: 0,
-        success:false
+        success:false,
+        uploadButton:false
     } 	
     handleUpload = () => { 
         const canvasRef= this.imagePreviewCanvasRef.current
@@ -96,6 +98,7 @@ class ProfileUpdate extends React.Component{
     handleOnCropChange = (crop)=>{
         //console.log(crop);
         this.setState({crop:crop})
+        this.setState({uploadButton:true})
         //console.log(this.state)
     }
     handleOnCropComplete= (crop,pixelCrop)=>{
@@ -140,46 +143,66 @@ class ProfileUpdate extends React.Component{
             imgSrc:null,
             crop:{
                 aspect: 1/1
-            }
+            },
+            uploadButton:false
         })
  
     }
     render() {
         const {imgSrc}= this.state;
         return (
-            <div>
+            <div className="container">
             {imgSrc!== null?
             <div>
-                <ReactCrop  style={{width:"300px"}}
-                    src={imgSrc} 
-                    crop={this.state.crop}
-                    onChange={this.handleOnCropChange} 
-                    onImageLoaded={this.handleImageLoaded}
-                    onComplete={this.handleOnCropComplete}
-                             />
+	            <div className="row">
+	            	<div className="col-md-6">
+	            	<h5>Select and Crop:</h5>
+	                <ReactCrop style={{height:"250px"}}
+	                    src={imgSrc} 
+	                    crop={this.state.crop}
+	                    onChange={this.handleOnCropChange} 
+	                    onImageLoaded={this.handleImageLoaded}
+	                    onComplete={this.handleOnCropComplete}
+	                             />
 
-                    <br/>
-                    <h5>Please Crop First then Press Upload Button, or it will be a blank image.</h5>
-                    <p>Preview</p>
-                    <canvas style={{width:"250px"}} ref={this.imagePreviewCanvasRef} ></canvas>
-                    <br/>
-                    <button onClick={this.handleClearToDefault} >Clear</button>
-                    <button onClick={this.handleUpload} >Upload</button>
-                    <div> {Math.round(this.state.loaded,2) } %</div>
+	                    <br/>
+	                    
+	                    
+	                </div>
+	                <div className="col-md-6">
+	                    <h5>Preview</h5>
+	                    <canvas className="img-thumbnail" style={{width:"246px"}} ref={this.imagePreviewCanvasRef} ></canvas>
+	                    <br/>
+	                </div>
+		                    
+	            </div>
+	            <div>
+		            <h6 style={{color:"#7f7f7f",width:"270px"}}>Please Select the Area of the picture you want to upload.</h6>
+	                    
+	                    {this.state.uploadButton?
+			            <button style={{margin:"0",marginBottom:"2px",width:"150px"}} className="btn btn-success" onClick={this.handleUpload} >Upload</button>
 
+			            :null
+			            }
+			            <br/>
+			            {this.state.success?
+			            <Link to="/profile">Go Back</Link>
+			            :null}
+	                    <button style={{margin:"0",width:"150px"}} className="btn btn-info"  onClick={this.handleClearToDefault} >Clear</button>
+	                    
+	                    <div><h5 style={{color:"red",fontWeight:"bold"}}>{Math.round(this.state.loaded,2) } %</h5></div>
+                    </div>
             </div>
-
              :<div>
-                      <h1>Drop zone</h1>
-                      <Dropzone  onDrop={this.handleOnDrop} accept={acceptedFileType} maxSize={imageMaxSize} >Drop file here</Dropzone>
+                      <h5>Drop zone</h5>
+                      <Dropzone onDrop={this.handleOnDrop} accept={acceptedFileType} maxSize={imageMaxSize} >Drop file here</Dropzone>
 
 
              </div>
 
             }
-            {this.state.success?
-            <Link to="/profile">Go Back</Link>
-            :null}
+
+
         </div>
 
         );

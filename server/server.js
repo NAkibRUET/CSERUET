@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const nodemailer= require('nodemailer');
 const bcrypt = require('bcrypt');
 const SALT_I = 13;
 const jwt = require('jsonwebtoken');
@@ -239,7 +240,56 @@ app.post('/api/login',(req,res)=>{
 	})
 
 })
-
+app.post('/api/send',(req,res)=>{
+    const output= `
+    <p>You have a new email</p>
+    <ul>
+        <li>'name:' ${req.body.name} </li>
+        <li>'Company:' ${req.body.company} </li>
+        <li>'EMail:' ${req.body.email} </li>
+        <li>'Phone:' ${req.body.phone} </li>
+    </ul>
+    <h3>Message</h3>
+    <p>${req.body.message}</p>`
+ 
+    let transporter = nodemailer.createTransport({
+        host: 'in-v3.mailjet.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: 'cf9583c83ea5f6fd61bc10a57a64a716', // generated ethereal user
+            pass: '5a120de9a4bea34891253d34705a628a' // generated ethereal password
+        },
+        tls:{
+            rejectUnauthorized: false
+        }
+    });
+ 
+    // setup email data with unicode symbols
+    let mailOptions = {
+        from: '"Testing Email" <iafbd24@gmail.com>', // sender address
+        to: 'hussain0296@gmail.com', // list of receivers
+        subject: 'Testing email with node', // Subject line
+        text: 'Hello world?', // plain text body
+        html: output // html body
+    };
+ 
+    // send mail with defined transport object
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        // Preview only available when sending through an Ethereal account
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+ 
+        //res.render('contact',{msg:'email has been sent'})
+        res.json({
+        	message:'email has been sent'
+        })
+    });
+ 
+})
 const port = process.env.PORT || 3001;
 
 app.listen(port,()=>{ //check if the server is running or not
