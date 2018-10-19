@@ -19,6 +19,9 @@ const user2Schema = mongoose.Schema({
 	},
 	image:{
 		type:String
+	},
+	fl:{
+		type:String
 	}
 })
 const User2 = mongoose.model('User2',user2Schema)

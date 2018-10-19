@@ -12,6 +12,18 @@ class ProfileUpdate extends React.Component{
 		error:'',
 		success:false
 	}
+	componentWillMount(){
+		let x = this.props.user.login.roll;
+		
+		axios.get(`/api/profiledata?roll=${x}`,this.props.user.login.roll ).then(response => {	
+			this.setState({
+				name:response.data.name,
+				email:response.data.email,
+				blood:response.data.blood,
+				//image: response.data.image
+			})
+		})
+	}
 	handleName=(event)=>{
 		this.setState({name:event.target.value});
 	}
@@ -65,24 +77,27 @@ class ProfileUpdate extends React.Component{
 						type="text" 
 						placeholder="Enter Name"
 						onChange={this.handleName}
+						value={this.state.name}
 					/></div>
 					<div className=""><input
-						 type="text" 
+						 type="email" 
 						 placeholder="Enter Email" 
-						 onChange={this.handleEmail}
+						 onChange={this.handleEmail} 
+						 value={this.state.email}
 						 />
 
 					</div>
 					<div className=""><input
 						 type="text" 
 						 placeholder="Enter Blood Group" 
-						 onChange={this.handleBlood}
+						 onChange={this.handleBlood} 
+						 value={this.state.blood}
 						 />
 
 					</div>
 		
 						        
-			        <button type="submit" onClick={this.handleUpload}>Upload</button>
+			        <button type="submit" onClick={this.handleUpload}>Update</button>
 					
 					{
 						this.state.success?

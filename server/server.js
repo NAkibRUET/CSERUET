@@ -75,7 +75,6 @@ app.post('/api/updateImage',parser.single('file'),(req,res)=>{
 			})
 		}
   	})
-  	
 })
 
 app.post('/api/updateProfileInfo',(req,res)=>{
@@ -83,9 +82,13 @@ app.post('/api/updateProfileInfo',(req,res)=>{
   	let name = req.body.name;
   	let email = req.body.email;
   	let blood = req.body.blood;
-  	console.log(name);
-  	console.log(roll);
-  	User2.findOneAndUpdate({roll: `${roll}`}, {$set:{name:`${name}`,email: `${email}`,blood: `${blood}`}},{new:true},(err,user)=>{
+  	let fl = "0";
+  	if(email){
+  		fl = "1";
+  	}
+  	//console.log(name);
+  	//console.log(roll);
+  	User2.findOneAndUpdate({roll: `${roll}`}, {$set:{name:`${name}`,email: `${email}`,blood: `${blood}`,fl:`${fl}`}},{new:true},(err,user)=>{
 		if(err)return res.status(400).send(err);
 		if(user){
 			res.json({
@@ -238,56 +241,82 @@ app.post('/api/login',(req,res)=>{
 			})
 		}
 	})
-
 })
 app.post('/api/send',(req,res)=>{
-    const output= `
-    <p>You have a new email</p>
-    <ul>
-        <li>'name:' ${req.body.name} </li>
-        <li>'Company:' ${req.body.company} </li>
-        <li>'EMail:' ${req.body.email} </li>
-        <li>'Phone:' ${req.body.phone} </li>
-    </ul>
-    <h3>Message</h3>
-    <p>${req.body.message}</p>`
- 
-    let transporter = nodemailer.createTransport({
-        host: 'in-v3.mailjet.com',
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: 'cf9583c83ea5f6fd61bc10a57a64a716', // generated ethereal user
-            pass: '5a120de9a4bea34891253d34705a628a' // generated ethereal password
-        },
-        tls:{
-            rejectUnauthorized: false
-        }
-    });
- 
-    // setup email data with unicode symbols
-    let mailOptions = {
-        from: '"Testing Email" <iafbd24@gmail.com>', // sender address
-        to: 'hussain0296@gmail.com', // list of receivers
-        subject: 'Testing email with node', // Subject line
-        text: 'Hello world?', // plain text body
-        html: output // html body
-    };
- 
-    // send mail with defined transport object
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
-        }
-        console.log('Message sent: %s', info.messageId);
-        // Preview only available when sending through an Ethereal account
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
- 
-        //res.render('contact',{msg:'email has been sent'})
-        res.json({
-        	message:'email has been sent'
-        })
-    });
+	let roll = req.body.roll;
+	User1.findOne({roll: `${roll}`},(err,user1)=>{
+		if(user1.fl=="0"){
+			res.json({
+				Message:"You haven't ever changed your password. Please contact your CR. He/She knows what to do"
+			})
+		}
+		else if(user1.fl=="1"){
+			let code = user1.code;
+			
+			User2.findOne({roll: `${roll}`},(err,user2)=>{
+				if(user2.fl){
+					if(user2.fl=="0"){
+						res.json({
+							Message:"You haven't provided your email. You cannot reset your password. Please contact your CR."
+						})
+					}
+					if(user2.fl=="1"){
+						let emailaddress = user2.email;
+					    const output= `
+					    <p>Hi ${roll}, Please follow the link to reset your password</p>
+					    <a href="http:localhost:3000/forgotPassword/${roll}/${code}"><p style="font-weight:bold">http:localhost:3000/forgotPassword?user=${roll}&code=${code}</p></a>
+					    
+					    `
+					 
+					    let transporter = nodemailer.createTransport({
+					        host: 'in-v3.mailjet.com',
+					        port: 587,
+					        secure: false, // true for 465, false for other ports
+					        auth: {
+					            user: 'cf9583c83ea5f6fd61bc10a57a64a716', // generated ethereal user
+					            pass: '5a120de9a4bea34891253d34705a628a' // generated ethereal password
+					        },
+					        tls:{
+					            rejectUnauthorized: false
+					        }
+					    });
+					 
+					    // setup email data with unicode symbols
+					    let mailOptions = {
+					        from: '"RUET CSE" <iafbd24@gmail.com>', // sender address
+					        to: emailaddress, // list of receivers
+					        subject: 'Reset Password', // Subject line
+					        //
+					        html: output // html body
+					    };
+					 
+					    // send mail with defined transport object
+					    transporter.sendMail(mailOptions, (error, info) => {
+					        if (error) {
+					            return console.log(error);
+					        }
+					        console.log('Message sent: %s', info.messageId);
+					        // Preview only available when sending through an Ethereal account
+					        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+					 
+					        //res.render('contact',{msg:'email has been sent'})
+					        res.json({
+					        	message:'email has been sent'
+					        })
+					    });
+					    /*let code = "";
+						for (let i = 0; i < 15; i++)
+						   code += possible.charAt(Math.floor(Math.random() * possible.length));
+					    User1.findOneAndUpdate({roll:`${roll}`}, {$set:{code:`${code}`}},(err,user)=>{
+
+						})*/					
+					}
+
+				}		
+			})		
+		}
+	})
+	
  
 })
 const port = process.env.PORT || 3001;

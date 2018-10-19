@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import {loginUser} from '../actions';
+//import {loginUser} from '../actions'
 
-class Login extends React.Component{
+class ChangePassword extends React.Component{
 	state={
 		roll:'',
 		password:'',
@@ -13,7 +12,7 @@ class Login extends React.Component{
 	submitForm = (e)=>{
 		e.preventDefault();
 		console.log(this.state);
-		this.props.dispatch(loginUser(this.state));
+//		this.props.dispatch(loginUser(this.state));
 	}
 	
 	handleInputEmail=(event)=>{
@@ -56,9 +55,6 @@ class Login extends React.Component{
 					}
 					</div>
 				</form>
-				<div>
-				<Link to="/"><button>Forgot Password</button></Link>
-				</div>
 			</div>
 		)
 	}
@@ -69,4 +65,4 @@ function mapStateToProps(state){
 		user:state.user
 	}
 }
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(ChangePassword);

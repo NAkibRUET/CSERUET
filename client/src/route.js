@@ -12,6 +12,7 @@ import Login from './containers/login';
 //import AddBook from './containers/add';
 import Layout from './hoc/layout';
 import Auth from './hoc/auth';
+import ChangePassword from './components/Profile/change_password';
 class Routes extends Component{
 
 	state={
@@ -30,6 +31,7 @@ class Routes extends Component{
 					<Route path="/profile" exact component={Auth(Profile,1)}/>					
 					<Route path="/profile/update/image" exact component={Auth(ProfileUpdateImage,1)}/>
 					<Route path="/profile/update/info" exact component={Auth(ProfileUpdateInfo,1)}/>
+					<Route path="/profile/change/password" exact component={Auth(ChangePassword,1)}/>
 				</Switch>
 			</Layout>
 		)
