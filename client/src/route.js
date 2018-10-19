@@ -9,6 +9,7 @@ import ProfileUpdateInfo from './components/Profile/profile_update_info';
 import Profile from './components/Profile/profile';
 //import FileUpload from './components/fileupload';
 import Login from './containers/login';
+import Logout from './containers/logout';
 //import AddBook from './containers/add';
 import Layout from './hoc/layout';
 import Auth from './hoc/auth';
@@ -28,10 +29,12 @@ class Routes extends Component{
 				<Switch>
 					<Route path="/" exact component={Auth(Home,null)}/>
 					<Route path="/login" exact component={Auth(Login,2)}/>
+					<Route path="/logout" exact component={Auth(Logout,1)}/>
 					<Route path="/profile" exact component={Auth(Profile,1)}/>					
 					<Route path="/profile/update/image" exact component={Auth(ProfileUpdateImage,1)}/>
 					<Route path="/profile/update/info" exact component={Auth(ProfileUpdateInfo,1)}/>
 					<Route path="/profile/change/password" exact component={Auth(ChangePassword,1)}/>
+					//<Route path="/forgot/change/password" exact component={Auth(ChangePassword,1)}/>
 				</Switch>
 			</Layout>
 		)

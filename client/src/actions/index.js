@@ -6,7 +6,13 @@ export function loginUser({roll,password}){
 		payload:request
 	}
 }
-
+export function changePass({roll,oldPassword,newPassword,confNewPassword}){
+	const request = axios.post(`/api/changePassword`,{roll,oldPassword,newPassword,confNewPassword}).then(response => response.data)
+	return{
+		type:"USER_CHANGE_PASS",
+		payload:request
+	}
+}
 export function auth() {
 	const request = axios.get(`/api/auth`).then(response=>response.data)
 	return{

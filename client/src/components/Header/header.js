@@ -71,6 +71,9 @@ class Header extends React.Component {
                           <NavItem>
                               <NavLink to="/login">Login</NavLink>
                           </NavItem>
+                          <NavItem>
+                              <NavLink to="/logout">Logout</NavLink>
+                          </NavItem>
                         </NavbarNav>
                     </Collapse>
                     </div>

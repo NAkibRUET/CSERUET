@@ -162,24 +162,69 @@ app.post('/api/changePassword',(req,res)=>{
 	let oldPass = req.body.oldPassword;
 	let newPass = req.body.newPassword;
 	let confNewPass = req.body.confNewPassword;
-	
+	console.log(roll);
+	console.log(oldPass);
+	console.log(newPass);
+	console.log(confNewPass);
+
 	if(newPass === confNewPass){
 		bcrypt.genSalt(SALT_I,(err,salt)=>{
 			if(err) return res.send(err)
 			bcrypt.hash(confNewPass,salt,(err,hash)=>{
 				if(err)return res.send(err)
 				confNewPass = hash;
-				User1.findOneAndUpdate({roll: `${roll}`,password:`${oldPass}`}, {$set:{password2:`${hash}`,fl:"1"}},{new:true},(err,user)=>{
-					if(err)return res.status(400).send(err);
-					if(!user){
-						res.json({
-							message:"Old Password Doesn't match"
-						})
+				/*
+				bcrypt.compare(req.body.password,user.password2,(err,isMatch)=>{
+				*/
+				User1.findOne({roll:`${roll}`},(err,userx)=>{
+					if(userx.fl==="0"){
+						User1.findOneAndUpdate({roll: `${roll}`,password:`${oldPass}`}, {$set:{password2:`${hash}`,fl:"1"}},{new:true},(err,user)=>{
+							if(err)return res.status(400).send(err);
+							if(!user){
+								res.json({
+									passChange:false,
+									Message:"Old Password Doesn't match"
+								})
+							}else{
+								res.json({
+									passChange:true,
+									Message:"Successfully changed password"
+								})
+							}
+						})		
+					}else if(userx.fl==="1"){
+						bcrypt.compare(req.body.oldPassword,userx.password2,(err,isMatch)=>{if(isMatch){
+								User1.findOneAndUpdate({roll: `${roll}`}, {$set:{password2:`${hash}`,fl:"1"}},{new:true},(err,user)=>{
+									if(err)return res.status(400).send(err);
+									if(!user){
+										res.json({
+											passChange:false,
+											Message:"Not Successful"
+										})
+									}else{
+										res.json({
+											passChange:true,
+											Message:"Successfully changed password"
+										})
+									}
+								})		
+							}
+							else{
+								res.json({
+									passChange:false,
+									Message:"Old Password Doesn't match"
+								})
+							}	
+						})	
 					}
-					res.send(user)
 				})
-		
 			})
+		})
+	}
+	else{
+		res.json({
+			passChange:false,
+			Message:"New Password and Confirm Password doesn't match"
 		})
 	}
 })
@@ -247,7 +292,7 @@ app.post('/api/send',(req,res)=>{
 	User1.findOne({roll: `${roll}`},(err,user1)=>{
 		if(user1.fl=="0"){
 			res.json({
-				Message:"You haven't ever changed your password. Please contact your CR. He/She knows what to do"
+				Message:"You haven't ever changed your password. Please use the password we provided you."
 			})
 		}
 		else if(user1.fl=="1"){

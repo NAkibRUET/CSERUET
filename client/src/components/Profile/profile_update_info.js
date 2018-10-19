@@ -19,7 +19,7 @@ class ProfileUpdate extends React.Component{
 			this.setState({
 				name:response.data.name,
 				email:response.data.email,
-				blood:response.data.blood,
+				blood:response.data.blood
 				//image: response.data.image
 			})
 		})
@@ -53,6 +53,7 @@ class ProfileUpdate extends React.Component{
 	         	success:true
 	         })
 	      })
+	      
   	}
 	submitForm = (e)=>{
 		
