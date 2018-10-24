@@ -13,25 +13,25 @@ export function changePass({roll,oldPassword,newPassword,confNewPassword}){
 		payload:request
 	}
 }
+export function forgotCheck({roll}){
+	const request = axios.post(`/api/send`,{roll}).then(response => response.data)
+	return{
+		type:"USER_FORGOT_CHECK",
+		payload:request
+	}
+}
+
+export function forgotPass({roll,newPassword,confNewPassword}){
+	const request = axios.post(`/api/forgotPassword`,{roll,newPassword,confNewPassword}).then(response => response.data)
+	return{
+		type:"USER_FORGOT_PASS",
+		payload:request
+	}
+}
 export function auth() {
 	const request = axios.get(`/api/auth`).then(response=>response.data)
 	return{
 		type:"USER_AUTH",
 		payload:request
-	}
-}
-export function addBook(book) {
-	const request = axios.post('/api/book',book).then(response=>response.data)
-	return{
-		type:"ADD_BOOK",
-		payload:request
-	}
-}
-
-export function getUserPost(userId) {
-	const request = axios.get(`/api/user_post?user=${userId}`).then(response=> response.data);
-	return{
-		type:"GET_USER_POST",
-		payload:request	
 	}
 }

@@ -14,7 +14,8 @@ class Profile extends React.Component{
 	componentWillMount(){
 		let x = this.props.user.login.roll;
 		
-		axios.get(`/api/profiledata?roll=${x}`,this.props.user.login.roll ).then(response => {	
+		axios.get(`/api/profiledata?roll=${x}`).then(response => {	
+			
 			this.setState({
 				name:response.data.name,
 				email:response.data.email,

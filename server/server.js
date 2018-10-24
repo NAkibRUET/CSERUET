@@ -4,11 +4,11 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const nodemailer= require('nodemailer');
 const bcrypt = require('bcrypt');
+
 const SALT_I = 13;
 const jwt = require('jsonwebtoken');
 const app = express();
 const config=require('./config/config').get(process.env.NODE_ENV);
-
 
 const multer = require('multer');
 const cloudinary= require('cloudinary');
@@ -40,7 +40,9 @@ mongoose.connect(config.DATABASE, function() { /* dummy function */ })
 
 const { User1 } = require('./models/user1');
 const { User2 } = require('./models/user2');
+const { Admin } = require('./models/admin');
 const { auth } = require('./middleware/auth');
+const { adminAuth } = require('./middleware/admin_auth');
 
 
 app.use(bodyParser.json());
@@ -108,6 +110,15 @@ app.get('/api/auth',auth,(req,res)=>{
 	})
 })
 
+app.get('/api/adminauth',adminAuth,(req,res)=>{
+
+	res.json({
+		isAuth:true,
+		id:req.user._id,
+		username:req.user.username
+	})
+})
+
 app.get('/api/logout',auth,(req,res)=>{
 	req.user.deleteToken(req.token,(err,user)=>{
 		if(err)return res.status(400).send(err);
@@ -116,9 +127,16 @@ app.get('/api/logout',auth,(req,res)=>{
 	res.clearCookie("auth");
 })
 
+app.get('/api/adminlogout',adminAuth,(req,res)=>{
+	req.user.deleteToken(req.token,(err,user)=>{
+		if(err)return res.status(400).send(err);
+		res.sendStatus(200); 
+	})
+	res.clearCookie("admin");	
+})
 app.post('/api/register',(req,res)=>{
 	let pass = "";
-	let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#";
+	let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$";
 
 	for (let i = 0; i < 8; i++)
 	   pass += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -142,7 +160,8 @@ app.post('/api/register',(req,res)=>{
 					Message: "Successfully Updated"
 				})
 			})
-		}else{
+		}
+		else{
 			res.json({
 				message:"User already exist"
 			})
@@ -156,26 +175,82 @@ app.get('/api/showallusers',(req,res)=>{
 		res.send(doc);
 	})
 })
+app.get('/api/getCode',(req,res)=>{
+	let roll = req.query.roll;
+	User1.findOne({roll:`${roll}`},(err,user)=>{
+		if(err)return res.send(err);
+		if(user){
+			res.json({
+				success:true,
+				code: user.code
+			})
+		}else{
+			res.json({
+				success:false
+			})
+		}
+	})
+})
+app.post('/api/forgotPassword',(req,res)=>{
+	let roll = req.body.roll;
+	let newPassword = req.body.newPassword;
+	let confNewPass = req.body.confNewPassword;
+	console.log(roll);
+	console.log(newPassword);
+	//console.log(newPassword);
+	if(newPassword===confNewPass){
+		bcrypt.genSalt(SALT_I,(err,salt)=>{
+			if(err) return res.send(err)
+			bcrypt.hash(confNewPass,salt,(err,hash)=>{
+				if(err)return res.send(err)
+				let code = "";
+				let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$";
+				for (let i = 0; i < 15; i++)
+				   code += possible.charAt(Math.floor(Math.random() * possible.length));
+				User1.findOneAndUpdate({roll: `${roll}`}, {$set:{password2:`${hash}`,code:`${code}`}},{new:true},(err,user)=>{
+					console.log("Nakib")
+					if(user){
+						//console.log("Nakib")			
+						res.json({
+							success:true,
+							message:"Successfully Changed Password"
+						})
+					}
+					else{
+						res.json({
+							success:false,
+							message:"Something Went Wrong"
+						})	
+					}
+				})
+			})
+		})
+	}else{
+		res.json({
+			success:false,
+			message: "New Password and Confirm Password doesn't match"
+		})
+	}
+})
+
 app.post('/api/changePassword',(req,res)=>{
 	let roll = req.body.roll;
 	
 	let oldPass = req.body.oldPassword;
 	let newPass = req.body.newPassword;
 	let confNewPass = req.body.confNewPassword;
-	console.log(roll);
-	console.log(oldPass);
-	console.log(newPass);
-	console.log(confNewPass);
+	//console.log(roll);
+	//console.log(oldPass);
+	//console.log(newPass);
+	//console.log(confNewPass);
 
 	if(newPass === confNewPass){
 		bcrypt.genSalt(SALT_I,(err,salt)=>{
 			if(err) return res.send(err)
 			bcrypt.hash(confNewPass,salt,(err,hash)=>{
 				if(err)return res.send(err)
-				confNewPass = hash;
-				/*
-				bcrypt.compare(req.body.password,user.password2,(err,isMatch)=>{
-				*/
+				confNewPass = hash;//hudai
+				
 				User1.findOne({roll:`${roll}`},(err,userx)=>{
 					if(userx.fl==="0"){
 						User1.findOneAndUpdate({roll: `${roll}`,password:`${oldPass}`}, {$set:{password2:`${hash}`,fl:"1"}},{new:true},(err,user)=>{
@@ -227,6 +302,50 @@ app.post('/api/changePassword',(req,res)=>{
 			Message:"New Password and Confirm Password doesn't match"
 		})
 	}
+})
+app.post('/api/adminlogin',(req,res)=>{
+	let username = req.body.username;
+	let password = req.body.password;
+	Admin.findOne({'username':req.body.username},(err,user)=>{
+		if(err)return res.status(400)
+		if(!user)return res.json({
+			isAdmin:false,
+			Message:"Wrong Username"
+		})
+		bcrypt.compare(req.body.password,user.password,(err,isMatch)=>{
+			if(err)throw err;
+			if(!isMatch)return res.json({
+				isAdmin:false,
+				Message:"Password Doesn't Match"		
+			})
+			else{
+				let token = jwt.sign(user._id.toHexString(),config.SECRET);
+				user.token = token;
+				
+				user.SaveToken(token,(err,user)=>{
+
+				})				
+				console.log(new Date());
+				res.cookie('admin', token, {maxAge : 24*8*3600000}).json({
+					isAuth:true,
+					Message:"Password Matched"		
+				});
+				/*res.cookie('auth',token).json({
+					isAuth:true,
+					Message:"Password Matched"		
+				})*/
+			}
+		})	
+	})
+})
+app.post('/api/adminregistration',(req,res)=>{
+	let username = req.body.username;
+	let pass = req.body.password;
+	const admin = new Admin({username:`${username}`,password:`${pass}`});
+	admin.save((err,doc)=>{
+		if(err)return res.status(400)
+		res.send(doc);
+	})
 })
 app.post('/api/login',(req,res)=>{
 	User1.findOne({'roll':req.body.roll},(err,user)=>{
@@ -289,83 +408,88 @@ app.post('/api/login',(req,res)=>{
 })
 app.post('/api/send',(req,res)=>{
 	let roll = req.body.roll;
+	//console.log(roll)
 	User1.findOne({roll: `${roll}`},(err,user1)=>{
-		if(user1.fl=="0"){
+		if(user1){
+			if(user1.fl=="0"){
+				res.json({
+					success:false,
+					Message:"You haven't ever changed your password. Please use the password we provided you."
+				})
+			}
+			else if(user1.fl=="1"){
+				let code = user1.code;
+				
+				User2.findOne({roll: `${roll}`},(err,user2)=>{
+					if(user2.fl){
+						if(user2.fl=="0"){
+							res.json({
+								success:false,
+								Message:"You haven't provided your email. You cannot reset your password. Please contact your CR."
+							})
+						}
+						else if(user2.fl=="1"){
+							let emailaddress = user2.email;
+						    const output= `
+						    <p>Hi ${roll}, Please follow the link to reset your password</p>
+						    <a href="http://localhost:3000/forgot_Password/${roll}/${code}"><p style="font-weight:bold">http://localhost:3000/forgot_Password?user=${roll}&code=${code}</p></a>
+						    
+						    `
+						 
+						    let transporter = nodemailer.createTransport({
+						        host: 'in-v3.mailjet.com',
+						        port: 587,
+						        secure: false, // true for 465, false for other ports
+						        auth: {
+						            user: 'cf9583c83ea5f6fd61bc10a57a64a716', // generated ethereal user
+						            pass: '5a120de9a4bea34891253d34705a628a' // generated ethereal password
+						        },
+						        tls:{
+						            rejectUnauthorized: false
+						        }
+						    });
+						 
+						    // setup email data with unicode symbols
+						    let mailOptions = {
+						        from: '"RUET CSE" <iafbd24@gmail.com>', // sender address
+						        to: emailaddress, // list of receivers
+						        subject: 'Reset Password', // Subject line
+						        //
+						        html: output // html body
+						    };
+						 
+						    // send mail with defined transport object
+						    transporter.sendMail(mailOptions, (error, info) => {
+						        if (error) {
+						            return console.log(error);
+						        }
+						        console.log('Message sent: %s', info.messageId);
+						        // Preview only available when sending through an Ethereal account
+						        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+						 
+						        //res.render('contact',{msg:'email has been sent'})
+						        res.json({
+						        	success:true,
+						        	Message:'Email has been sent, Please check your mail and follow further steps'
+						        })
+						    });
+						    
+						}
+
+					}		
+				})		
+			}
+		}
+		else{
 			res.json({
-				Message:"You haven't ever changed your password. Please use the password we provided you."
+				success:false,
+				Message:"User don't exist"
 			})
 		}
-		else if(user1.fl=="1"){
-			let code = user1.code;
-			
-			User2.findOne({roll: `${roll}`},(err,user2)=>{
-				if(user2.fl){
-					if(user2.fl=="0"){
-						res.json({
-							Message:"You haven't provided your email. You cannot reset your password. Please contact your CR."
-						})
-					}
-					if(user2.fl=="1"){
-						let emailaddress = user2.email;
-					    const output= `
-					    <p>Hi ${roll}, Please follow the link to reset your password</p>
-					    <a href="http:localhost:3000/forgotPassword/${roll}/${code}"><p style="font-weight:bold">http:localhost:3000/forgotPassword?user=${roll}&code=${code}</p></a>
-					    
-					    `
-					 
-					    let transporter = nodemailer.createTransport({
-					        host: 'in-v3.mailjet.com',
-					        port: 587,
-					        secure: false, // true for 465, false for other ports
-					        auth: {
-					            user: 'cf9583c83ea5f6fd61bc10a57a64a716', // generated ethereal user
-					            pass: '5a120de9a4bea34891253d34705a628a' // generated ethereal password
-					        },
-					        tls:{
-					            rejectUnauthorized: false
-					        }
-					    });
-					 
-					    // setup email data with unicode symbols
-					    let mailOptions = {
-					        from: '"RUET CSE" <iafbd24@gmail.com>', // sender address
-					        to: emailaddress, // list of receivers
-					        subject: 'Reset Password', // Subject line
-					        //
-					        html: output // html body
-					    };
-					 
-					    // send mail with defined transport object
-					    transporter.sendMail(mailOptions, (error, info) => {
-					        if (error) {
-					            return console.log(error);
-					        }
-					        console.log('Message sent: %s', info.messageId);
-					        // Preview only available when sending through an Ethereal account
-					        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-					 
-					        //res.render('contact',{msg:'email has been sent'})
-					        res.json({
-					        	message:'email has been sent'
-					        })
-					    });
-					    /*let code = "";
-						for (let i = 0; i < 15; i++)
-						   code += possible.charAt(Math.floor(Math.random() * possible.length));
-					    User1.findOneAndUpdate({roll:`${roll}`}, {$set:{code:`${code}`}},(err,user)=>{
-
-						})*/					
-					}
-
-				}		
-			})		
-		}
 	})
-	
- 
 })
 const port = process.env.PORT || 3001;
 
-app.listen(port,()=>{ //check if the server is running or not
+app.listen(port,()=>{
 	console.log('Server Running');
 })

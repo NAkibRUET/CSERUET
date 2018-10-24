@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import {loginUser} from '../actions';
+//import {loginUser} from '../actions';
 
-class Login extends React.Component{
+class AdminLogin extends React.Component{
 	state={
 		roll:'',
 		password:'',
@@ -13,7 +13,7 @@ class Login extends React.Component{
 	submitForm = (e)=>{
 		e.preventDefault();
 		console.log(this.state);
-		this.props.dispatch(loginUser(this.state));
+//		this.props.dispatch(loginUser(this.state));
 	}
 	
 	handleInputEmail=(event)=>{
@@ -24,7 +24,7 @@ class Login extends React.Component{
 	}
 	componentWillReceiveProps(nextProps){
 		if(nextProps.user.login.isAuth){
-			this.props.history.push('/profile');
+//			this.props.history.push('/profile');
 			this.setState({success:true});
 		}
 	}
@@ -69,4 +69,4 @@ function mapStateToProps(state){
 		user:state.user
 	}
 }
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(AdminLogin);

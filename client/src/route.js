@@ -3,7 +3,7 @@ import {Switch, Route} from 'react-router-dom';
 
 import Home from './components/Home/home';
 //import BookView from './components/Books';
-//import User from './components/Admin';
+import Admin from './components/Admin';
 import ProfileUpdateImage from './components/Profile/profile_update_image';
 import ProfileUpdateInfo from './components/Profile/profile_update_info';
 import Profile from './components/Profile/profile';
@@ -14,8 +14,10 @@ import Logout from './containers/logout';
 import Layout from './hoc/layout';
 import Auth from './hoc/auth';
 import ChangePassword from './components/Profile/change_password';
-class Routes extends Component{
+import ForgotPassword from './components/Profile/forgot_password';
+import Forgot from './components/Profile/forgot';
 
+class Routes extends Component{
 	state={
 		name: ''
 	}
@@ -30,11 +32,14 @@ class Routes extends Component{
 					<Route path="/" exact component={Auth(Home,null)}/>
 					<Route path="/login" exact component={Auth(Login,2)}/>
 					<Route path="/logout" exact component={Auth(Logout,1)}/>
-					<Route path="/profile" exact component={Auth(Profile,1)}/>					
+					<Route path="/profile" exact component={Auth(Profile,1)}/>
 					<Route path="/profile/update/image" exact component={Auth(ProfileUpdateImage,1)}/>
 					<Route path="/profile/update/info" exact component={Auth(ProfileUpdateInfo,1)}/>
 					<Route path="/profile/change/password" exact component={Auth(ChangePassword,1)}/>
-					//<Route path="/forgot/change/password" exact component={Auth(ChangePassword,1)}/>
+					<Route path="/forgot" exact component={Forgot}/>
+					<Route path="/forgot_Password/:roll/:code" exact component={ForgotPassword}/>
+					<Route path="/admin" exact component={Admin}/>
+
 				</Switch>
 			</Layout>
 		)
