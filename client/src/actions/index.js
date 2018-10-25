@@ -6,6 +6,13 @@ export function loginUser({roll,password}){
 		payload:request
 	}
 }
+export function loginAdmin({username,password}){
+	const request = axios.post(`/api/adminlogin`,{username,password}).then(response => response.data)
+	return{
+		type:"ADMIN_LOGIN",
+		payload:request
+	}
+}
 export function changePass({roll,oldPassword,newPassword,confNewPassword}){
 	const request = axios.post(`/api/changePassword`,{roll,oldPassword,newPassword,confNewPassword}).then(response => response.data)
 	return{
@@ -32,6 +39,13 @@ export function auth() {
 	const request = axios.get(`/api/auth`).then(response=>response.data)
 	return{
 		type:"USER_AUTH",
+		payload:request
+	}
+}
+export function adminAuth() {
+	const request = axios.get(`/api/adminAuth`).then(response=>response.data)
+	return{
+		type:"ADMIN_AUTH",
 		payload:request
 	}
 }

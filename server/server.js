@@ -113,7 +113,7 @@ app.get('/api/auth',auth,(req,res)=>{
 app.get('/api/adminauth',adminAuth,(req,res)=>{
 
 	res.json({
-		isAuth:true,
+		isAdmin:true,
 		id:req.user._id,
 		username:req.user.username
 	})
@@ -306,6 +306,7 @@ app.post('/api/changePassword',(req,res)=>{
 app.post('/api/adminlogin',(req,res)=>{
 	let username = req.body.username;
 	let password = req.body.password;
+	//console.log(password);
 	Admin.findOne({'username':req.body.username},(err,user)=>{
 		if(err)return res.status(400)
 		if(!user)return res.json({
@@ -327,7 +328,7 @@ app.post('/api/adminlogin',(req,res)=>{
 				})				
 				console.log(new Date());
 				res.cookie('admin', token, {maxAge : 24*8*3600000}).json({
-					isAuth:true,
+					isAdmin:true,
 					Message:"Password Matched"		
 				});
 				/*res.cookie('auth',token).json({

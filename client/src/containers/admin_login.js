@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-//import {loginUser} from '../actions';
+import {loginAdmin} from '../actions';
 
 class AdminLogin extends React.Component{
 	state={
-		roll:'',
+		username:'',
 		password:'',
 		error:'',
 		success:false
@@ -13,31 +13,31 @@ class AdminLogin extends React.Component{
 	submitForm = (e)=>{
 		e.preventDefault();
 		console.log(this.state);
-//		this.props.dispatch(loginUser(this.state));
+		this.props.dispatch(loginAdmin(this.state));
 	}
 	
-	handleInputEmail=(event)=>{
-		this.setState({roll:event.target.value});
+	handleInputUsername=(event)=>{
+		this.setState({username:event.target.value});
 	}
 	handleInputPassword=(event)=>{
 		this.setState({password:event.target.value});
 	}
 	componentWillReceiveProps(nextProps){
-		if(nextProps.user.login.isAuth){
-//			this.props.history.push('/profile');
+		if(nextProps.admin.adminLogin.isAdmin){
+			this.props.history.push('/admin');
 			this.setState({success:true});
 		}
 	}
 	render(){
-		let user = this.props.user;
+		let admin = this.props.admin;
 		return(
 			<div className="">
 				<form onSubmit={this.submitForm}>
 					<h2>Login Here</h2>
 					<div className=""><input 
 						type="text" 
-						placeholder="Enter Roll"
-						onChange={this.handleInputEmail}
+						placeholder="Enter username"
+						onChange={this.handleInputUsername}
 					/></div>
 					<div className=""><input
 						 type="password" 
@@ -50,15 +50,14 @@ class AdminLogin extends React.Component{
 					
 					<div className="error">
 					{
-						user.login?
-							<div>{user.login.Message}</div>
+						admin.adminLogin?
+							<div>{admin.adminLogin.Message}</div>
 						:null
 					}
 					</div>
 				</form>
-				<div>
-				<Link to="/forgot"><button>Forgot Password</button></Link>
-				</div>
+				
+
 			</div>
 		)
 	}
@@ -66,7 +65,7 @@ class AdminLogin extends React.Component{
 function mapStateToProps(state){
 	
 	return{
-		user:state.user
+		admin:state.admin
 	}
 }
 export default connect(mapStateToProps)(AdminLogin);

@@ -9,10 +9,13 @@ import ProfileUpdateInfo from './components/Profile/profile_update_info';
 import Profile from './components/Profile/profile';
 //import FileUpload from './components/fileupload';
 import Login from './containers/login';
+import AdminLogin from './containers/admin_login';
 import Logout from './containers/logout';
+import AdminLogout from './containers/admin_logout';
 //import AddBook from './containers/add';
 import Layout from './hoc/layout';
 import Auth from './hoc/auth';
+import AdAuth from './hoc/admin_auth';
 import ChangePassword from './components/Profile/change_password';
 import ForgotPassword from './components/Profile/forgot_password';
 import Forgot from './components/Profile/forgot';
@@ -38,8 +41,9 @@ class Routes extends Component{
 					<Route path="/profile/change/password" exact component={Auth(ChangePassword,1)}/>
 					<Route path="/forgot" exact component={Forgot}/>
 					<Route path="/forgot_Password/:roll/:code" exact component={ForgotPassword}/>
-					<Route path="/admin" exact component={Admin}/>
-
+					<Route path="/admin" exact component={AdAuth(Admin,1)}/>
+					<Route path="/admin/login" exact component={AdAuth(AdminLogin,2)}/>
+					<Route path="/admin/logout" exact component={AdAuth(AdminLogout,1)}/>
 				</Switch>
 			</Layout>
 		)

@@ -1,27 +1,25 @@
 import React, {Component} from 'react';
-import {auth} from '../actions'
+import {adminAuth} from '../actions'
 import {connect} from 'react-redux';
 
 export default function(ComposedClass,reload){
-	class Authentication extends Component{
+	class AdminAuthentication extends Component{
 		state={
 			loading:true
 		}
 		componentWillMount(){
-
-			this.props.dispatch(auth());
-
+			this.props.dispatch(adminAuth());
 		}
 		componentWillReceiveProps(nextProps){
 			this.setState({loading:false})
 
-			if(!nextProps.user.login.isAuth){
+			if(!nextProps.admin.adminLogin.isAdmin){
 				if(reload===1){
-					this.props.history.push("/login");
+					this.props.history.push("/admin/login");
 				}
 			}else{
 				if(reload === 2){
-					this.props.history.push("/profile");	
+					this.props.history.push("/admin");	
 				}
 				
 			}
@@ -31,15 +29,15 @@ export default function(ComposedClass,reload){
 				return <div>Loading...</div>
 			}
 			return(
-				<ComposedClass {...this.props} user={this.props.user}/>
+				<ComposedClass {...this.props} admin={this.props.admin}/>
 			)
 		}
 	}
 	function mapStateToProps(state){
-		console.log(state.user.login)
+		console.log(state.admin)
 		return{
-			user:state.user
+			admin:state.admin
 		}
 	}
-	return connect(mapStateToProps)(Authentication)
+	return connect(mapStateToProps)(AdminAuthentication)
 }
