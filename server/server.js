@@ -41,6 +41,8 @@ mongoose.connect(config.DATABASE, function() { /* dummy function */ })
 const { User1 } = require('./models/user1');
 const { User2 } = require('./models/user2');
 const { Admin } = require('./models/admin');
+const { Idea } = require('./models/idea_contest');
+const { Contest } = require('./models/contest');
 const { auth } = require('./middleware/auth');
 const { adminAuth } = require('./middleware/admin_auth');
 
@@ -48,6 +50,35 @@ const { adminAuth } = require('./middleware/admin_auth');
 app.use(bodyParser.json());
 app.use(cookieParser());
 //User
+app.post('/api/setcontest',(req,res)=>{
+	let contestType = req.body.contestType;
+	let title = req.body.Title;
+	let date = req.body.Date;
+	let start = req.body.Start;
+	let end = req.body.End;
+	let description = req.body.Description;
+	//console.log(contestType)
+	starttime = date + "T" + start +"Z";
+	//console.log(title)
+	//console.log(date)
+	//console.log(starttime)
+	//console.log(end)
+	//console.log(description)
+})
+app.post('/api/time',(req,res)=>{
+	if(new Date("2016-07-25T00:01:21Z") < new Date("2018-07-25T00:01:22Z")){
+		console.log("Nakib")
+	}
+	else{
+		console.log("none")
+	}
+	let time = req.body.time;
+	const idea1 = new Idea({starttime:`${time}`});
+	idea1.save((err,doc)=>{
+		if(err)return res.status(400)
+		res.send(doc)
+	})
+})
 app.get('/api/profiledata',(req,res)=>{
 	//console.log(req.query.roll)
 	User2.findOne({'roll':req.query.roll},(err,exist)=>{

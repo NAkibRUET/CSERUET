@@ -13,6 +13,13 @@ export function loginAdmin({username,password}){
 		payload:request
 	}
 }
+export function adminPost({contestType,Title,Date,Start,End,Description}){
+	const request = axios.post(`/api/setcontest`,{contestType,Title,Date,Start,End,Description}).then(response => response.data)
+	return{
+		type:"ADMIN_POST",
+		payload:request
+	}
+}
 export function changePass({roll,oldPassword,newPassword,confNewPassword}){
 	const request = axios.post(`/api/changePassword`,{roll,oldPassword,newPassword,confNewPassword}).then(response => response.data)
 	return{
