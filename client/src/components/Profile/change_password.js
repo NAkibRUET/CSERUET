@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {changePass} from '../../actions'
-
+import { changePass } from '../../actions'
+import { Link } from 'react-router-dom';
 class ChangePassword extends React.Component{
 	state={
 		roll:this.props.user.login.roll,
@@ -60,7 +60,10 @@ class ChangePassword extends React.Component{
 					<div className="">
 					{
 						user.changePass?
-							<div>{user.changePass.Message}</div>
+							<div>
+								<h5>{user.changePass.Message}</h5>
+								<h5><Link to="/profile">Go Back!</Link></h5>
+							</div>
 						:null
 					}
 					</div>
