@@ -165,9 +165,7 @@ class ProfileUpdate extends React.Component{
 	                    onComplete={this.handleOnCropComplete}
 	                             />
 
-	                    <br/>
-	                    
-	                    
+	                    <br/>     
 	                </div>
 	                <div className="col-md-6">
 	                    <h5>Preview</h5>
@@ -196,7 +194,6 @@ class ProfileUpdate extends React.Component{
              :<div>
                       <h5>Drop zone</h5>
                       <Dropzone onDrop={this.handleOnDrop} accept={acceptedFileType} maxSize={imageMaxSize} >Drop file here</Dropzone>
-
 
              </div>
 

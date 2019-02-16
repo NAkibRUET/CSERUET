@@ -4,13 +4,14 @@ import {Switch, Route} from 'react-router-dom';
 import Home from './components/Home/home';
 //import BookView from './components/Books';
 import Admin from './components/Admin';
+import contestPage from './components/Contest/contestpage';
 import ProfileUpdateImage from './components/Profile/profile_update_image';
 import ProfileUpdateInfo from './components/Profile/profile_update_info';
 import Profile from './components/Profile/profile';
 //import FileUpload from './components/fileupload';
 import Login from './containers/login';
 import AdminLogin from './containers/admin_login';
-import Logout from './containers/logout';
+import Logout from './containers/logout'; 
 import AdminLogout from './containers/admin_logout';
 //import AddBook from './containers/add';
 import Layout from './hoc/layout';
@@ -28,6 +29,7 @@ class Routes extends Component{
 		
 		
 	}
+	
 	render(){
 		return(
 			<Layout>
@@ -36,6 +38,7 @@ class Routes extends Component{
 					<Route path="/login" exact component={Auth(Login,2)}/>
 					<Route path="/logout" exact component={Auth(Logout,1)}/>
 					<Route path="/profile" exact component={Auth(Profile,1)}/>
+					<Route path="/contest/:id" exact component={Auth(contestPage,1)}/>
 					<Route path="/profile/update/image" exact component={Auth(ProfileUpdateImage,1)}/>
 					<Route path="/profile/update/info" exact component={Auth(ProfileUpdateInfo,1)}/>
 					<Route path="/profile/change/password" exact component={Auth(ChangePassword,1)}/>

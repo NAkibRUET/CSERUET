@@ -9,7 +9,7 @@ class FileUpload extends React.Component{
 		lastname:''
 	}
 	 
-	handleselectedFile = event => {
+	handleselectedFile = event => { 
 	    this.setState({
 	      selectedFile: event.target.files[0],
 	      loaded: 0,

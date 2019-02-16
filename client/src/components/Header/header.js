@@ -58,11 +58,11 @@ class Header extends React.Component {
                           </NavItem>
                           <NavItem>
                             <Dropdown>
-                                <NavLink to=""><DropdownToggle nav caret color="danger" style={{padding:"0"}}>Galary</DropdownToggle></NavLink>
+                                <NavLink to=""><DropdownToggle nav caret color="danger" style={{padding:"0"}}>Gallery</DropdownToggle></NavLink>
                                 <DropdownMenu style={{minWidth:"250px"}} right>
-                                    <NavLink to="/" className="dropitem">Photography Galary</NavLink>
-                                    <NavLink to="/" className="dropitem">Graphics Design Galary</NavLink>
-                                    <NavLink to="/" className="dropitem">Drawing Galary</NavLink>
+                                    <NavLink to="/" className="dropitem">Photography Gallery</NavLink>
+                                    <NavLink to="/" className="dropitem">Graphics Design Gallery</NavLink>
+                                    <NavLink to="/" className="dropitem">Drawing Gallery</NavLink>
                                 </DropdownMenu>
                             </Dropdown>
                           </NavItem>

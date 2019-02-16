@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {auth} from '../actions'
 import {connect} from 'react-redux';
 
@@ -8,9 +8,7 @@ export default function(ComposedClass,reload){
 			loading:true
 		}
 		componentWillMount(){
-
 			this.props.dispatch(auth());
-
 		}
 		componentWillReceiveProps(nextProps){
 			this.setState({loading:false})
@@ -23,7 +21,6 @@ export default function(ComposedClass,reload){
 				if(reload === 2){
 					this.props.history.push("/profile");	
 				}
-				
 			}
 		}
 		render(){

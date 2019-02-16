@@ -50,7 +50,7 @@ adminSchema.statics.findByToken = function(token, cb) {
 	jwt.verify(token,config.SECRET, function(err, decode){
 		user.findOne({"_id":decode},function(err,user) {
 			if(err)return cb(err);
-			cb(null,user);
+			cb(null,user); 
 		})
 	})
 }

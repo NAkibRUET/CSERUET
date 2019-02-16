@@ -20,8 +20,7 @@ export default function(ComposedClass,reload){
 			}else{
 				if(reload === 2){
 					this.props.history.push("/admin");	
-				}
-				
+				}	
 			}
 		}
 		render(){

@@ -42,6 +42,7 @@ class Admin extends React.Component{
 		this.setState({Description:event.target.value});
 	}
 	render(){
+		let admin = this.props.admin;
 		return(
 			<div>
 				<Link to="/admin/logout"><button>Logout</button></Link>
@@ -80,6 +81,11 @@ class Admin extends React.Component{
 					onChange={this.handleDescription}
 					></textarea>
 					<button type="submit">Submit</button>
+					{
+						admin.adminPost?
+							<div>{admin.adminPost.message}</div>
+						:null
+					}	
 				</form>
 			</div>
 

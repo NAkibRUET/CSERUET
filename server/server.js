@@ -21,7 +21,7 @@ cloudinary.config({
 const storage = cloudinaryStorage({
 	cloudinary: cloudinary,
 	folder: "test",
-	allowedFormats: ["jpg", "png"],
+	allowedFormats: ["jpg", "png" , "pdf", "docx"],
 	transformation: [{ width: 500, height: 500, crop: "limit" }]
 });
 const parser = multer({ storage: storage })
@@ -43,15 +43,36 @@ const { User2 } = require('./models/user2');
 const { Admin } = require('./models/admin');
 const { Idea } = require('./models/idea_contest');
 const { Contest } = require('./models/contest');
+const { Contestr } = require('./models/contest_rank');
 const { auth } = require('./middleware/auth');
 const { adminAuth } = require('./middleware/admin_auth');
 
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-//User
+
+//Contests
+app.get('/api/contests',(req,res)=>{
+	Contest.findOne({'fl':'0'}).sort({starttime:'asc'}).exec((err,doc)=>{
+		if(err)return res.status(400).send(err);
+		res.send(doc);
+	})
+})
+app.get('/api/contestinfo',(req,res)=>{
+	Contest.findOne({'_id':req.query.id},(err,doc)=>{
+		if(err)return res.status(400).send(err);
+		res.send(doc);
+	})	
+})
+app.post('/api/contestfinished',(req,res)=>{
+	let id = req.body.id;
+	Contest.findOneAndUpdate({'_id':id}, {$set:{fl:1}},{new:true},(err,doc)=>{
+		if(err)return res.status(400).send(err);
+		res.sendStatus(200);	
+	})
+})
 app.post('/api/setcontest',(req,res)=>{
-	let contestType = req.body.contestType;
+	let Type = req.body.contestType;
 	let title = req.body.Title;
 	let date = req.body.Date;
 	let start = req.body.Start;
@@ -60,7 +81,8 @@ app.post('/api/setcontest',(req,res)=>{
 	//console.log(contestType)
 	let starttime = date + "T" + start +"Z";
 	let endtime =  date + "T" + end +"Z";
-	//console.log(title)
+	let fl = 0;
+	console.log(title)
 	//console.log(date)
 	console.log(starttime)
 	console.log(endtime)
@@ -69,42 +91,39 @@ app.post('/api/setcontest',(req,res)=>{
 		console.log("Bad calc");
 	}
 	else{
-		console.log(endtime - starttime)
+		console.log("Good Calc");
 	}
-	/***
-	// Set the date we're counting down to
-	var countDownDate = new Date("2018-11-22T01:59Z");
-	countDownDate.setHours(countDownDate.getHours() - 6);
-	// Update the count down every 1 second
-	var x = setInterval(function() {
+	
+	const contest = new Contest({contestType:`${Type}`,title:`${title}`,starttime:`${starttime}`,endtime:`${endtime}`,description:`${description}`,fl:`${fl}`});
 
-	    // Get todays date and time
-	    var now = new Date();
-	    console.log(now)
-	    
-	    // Find the distance between now and the count down date
-	    var distance = countDownDate - now;
-	    
-	    
-	    // Time calculations for days, hours, minutes and seconds
-	    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-	    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-	    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-	    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-	    
-	    // Output the result in an element with id="demo"
-	    document.getElementById("demo").innerHTML = days + "d " + hours + "h "
-	    + minutes + "m " + seconds + "s ";
-	    
-	    // If the count down is over, write some text 
-	    if (distance < 0) {
-	        clearInterval(x);
-	        document.getElementById("demo").innerHTML = "EXPIRED";
-	    }
-	}, 1000);
+	contest.save((err,doc)=>{
+		if(err)return res.status(400)
+		if(doc){
+			res.json({
+				message:"New Contest Created"
+			})
+		}
+	});
 
-	*/
-	//console.log(description)
+})
+app.post('/api/contestsubmit',parser.single('file'),(req,res)=>{
+	let uploadFile = req.file;
+
+  	const fileName = uploadFile.url;
+  	console.log(fileName)
+  	//console.log(uploadFile.url)
+	let contestId = req.body.contestId;
+	let roll = req.body.roll;
+	console.log(roll);
+	console.log(contestId);
+	const contestsave = new Contestr({contestId:`${contestId}`,roll:`${roll}`,file:`${fileName}`,submittedOrNot:'1'});
+	contestsave.save((err,doc)=>{
+		if(err)return res.status(400)
+		res.json({
+			message: "Submitted Successfully, Thanks for your participation."
+		})
+	})
+
 })
 app.post('/api/time',(req,res)=>{
 	if(new Date("2016-07-25T00:01:21Z") < new Date("2018-07-25T00:01:22Z")){
@@ -120,6 +139,8 @@ app.post('/api/time',(req,res)=>{
 		res.send(doc)
 	})
 })
+
+//User
 app.get('/api/profiledata',(req,res)=>{
 	//console.log(req.query.roll)
 	User2.findOne({'roll':req.query.roll},(err,exist)=>{
@@ -566,3 +587,37 @@ const port = process.env.PORT || 3001;
 app.listen(port,()=>{
 	console.log('Server Running');
 })
+
+/***
+	// Set the date we're counting down to
+	var countDownDate = new Date("2018-11-22T01:59Z");
+	countDownDate.setHours(countDownDate.getHours() - 6);
+	// Update the count down every 1 second
+	var x = setInterval(function() {
+
+	    // Get todays date and time
+	    var now = new Date();
+	    console.log(now)
+	    
+	    // Find the distance between now and the count down date
+	    var distance = countDownDate - now;
+	    
+	    
+	    // Time calculations for days, hours, minutes and seconds
+	    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+	    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+	    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+	    
+	    // Output the result in an element with id="demo"
+	    document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+	    + minutes + "m " + seconds + "s ";
+	    
+	    // If the count down is over, write some text 
+	    if (distance < 0) {
+	        clearInterval(x);
+	        document.getElementById("demo").innerHTML = "EXPIRED";
+	    }
+	}, 1000);
+
+	*/
